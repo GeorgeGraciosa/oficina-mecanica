@@ -28,9 +28,9 @@ public class PessoaService {
         Pessoa novaPessoa = new Pessoa();
 
         novaPessoa.setId(pessoaId);
-        novaPessoa.setNomeCompleto(nomeCompleto);
+        novaPessoa.setNomeCompleto(nomeCompleto.trim());
         novaPessoa.setDataNascimento(dataNascimento);
-        novaPessoa.setCpfCnpj(cpfCnpj);
+        novaPessoa.setCpfCnpj(cpfCnpj.trim());
 
         return novaPessoa;
     }

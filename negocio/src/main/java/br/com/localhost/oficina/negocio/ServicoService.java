@@ -17,7 +17,7 @@ public class ServicoService {
 
         Servico servico = new Servico();
         servico.setVeiculo(veiculo);
-        servico.setDescricao(descricao);
+        servico.setDescricao(descricao.trim());
         servico.setDataInicio(new Date());
 
         return servico;
