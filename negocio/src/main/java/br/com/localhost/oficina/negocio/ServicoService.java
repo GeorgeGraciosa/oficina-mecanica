@@ -105,9 +105,16 @@ public class ServicoService {
     }
 
     public void finalizar(Servico servico) throws Exception {
+        if(servico == null) {
+            throw new Exception("Erro, serviço não pode ser nulo");
+        }
         if(servico.getDataFim() != null){
             throw new Exception("Esse serviço já foi finalizado");
         }
+
+        BigDecimal valorFinal = calcularValor(servico);
+
+        servico.setValor(valorFinal);
 
         servico.setDataFim(new Date());
 
