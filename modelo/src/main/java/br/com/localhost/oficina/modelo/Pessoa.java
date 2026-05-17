@@ -1,9 +1,10 @@
 package br.com.localhost.oficina.modelo;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class Pessoa {
-    private String id;
+    private UUID id;
     private String nomeCompleto;
     private Date dataNascimento;
     private String cpfCnpj;
@@ -24,11 +25,11 @@ public class Pessoa {
         this.dataNascimento = dataNascimento;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
