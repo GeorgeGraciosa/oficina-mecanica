@@ -2,6 +2,7 @@ package br.com.localhost.oficina.negocio;
 
 import br.com.localhost.oficina.modelo.Servico;
 import br.com.localhost.oficina.modelo.ServicoItem;
+import br.com.localhost.oficina.modelo.Veiculo;
 import br.com.localhost.oficina.modelo.enums.TipoItemServico;
 
 import java.math.BigDecimal;
@@ -9,12 +10,12 @@ import java.util.Date;
 
 public class ServicoService {
 
-    public Servico criarServico(br.com.localhost.oficina.modelo.Veiculo veiculo, String descricao) throws Exception {
+    public Servico criarServico(Veiculo veiculo, String descricao) throws Exception {
         if(veiculo == null) {
             throw new Exception("Veículo não pode ser nulo");
         }
 
-        br.com.localhost.oficina.modelo.Servico servico = new br.com.localhost.oficina.modelo.Servico();
+        Servico servico = new Servico();
         servico.setVeiculo(veiculo);
         servico.setDescricao(descricao);
         servico.setDataInicio(new Date());
@@ -22,7 +23,7 @@ public class ServicoService {
         return servico;
     }
 
-    public void adicionarItem(br.com.localhost.oficina.modelo.Servico servico, br.com.localhost.oficina.modelo.ServicoItem item) throws Exception {
+    public void adicionarItem(Servico servico, ServicoItem item) throws Exception {
         if(servico == null) {
             throw new Exception("O serviço não pode ser nulo.");
         }
@@ -38,7 +39,7 @@ public class ServicoService {
         servico.getItens().add(item);
     }
 
-    public BigDecimal calcularValor(br.com.localhost.oficina.modelo.Servico servico) throws Exception {
+    public BigDecimal calcularValor(Servico servico) throws Exception {
         if(servico == null) {
             throw new Exception("Serviço é nulo.");
         }
@@ -62,34 +63,48 @@ public class ServicoService {
                 throw new Exception("O tipo do item é obrigatório.");
             }
 
-            if (item.getPeca() == null) {
-                throw new Exception("A peça do item é obrigatória.");
+            BigDecimal quantidade = BigDecimal.valueOf(item.getQuantidade());
+
+            if(quantidade.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new Exception("A quantidade deve ser maior que zero.");
             }
 
-            if(item.getTipoServico() == null) {
-                throw new Exception("O tipo de serviço do item é obrigatório.");
-            }
-
-            BigDecimal valorPeca = item.getPeca().getValor();
-            BigDecimal valorServico = item.getTipoServico().getValor();
+            BigDecimal valorItem = BigDecimal.ZERO;
 
             if(item.getTipo().equals(TipoItemServico.PECA)){
-                if (valorPeca.compareTo(BigDecimal.ZERO) < 1) {
+                if (item.getPeca() == null) {
+                    throw new Exception("A peça do item é obrigatória.");
+                }
+                if (item.getPeca().getValor().compareTo(BigDecimal.ZERO) < 1) {
                     throw new Exception("O valor não pode ser zero ou negativo");
                 }
-                soma = soma.add(valorPeca);
+                if (item.getPeca().getValor() == null) {
+                    throw new Exception("O valor da peça é obrigatório.");
+                }
+
+                valorItem = item.getPeca().getValor();
             }
             if(item.getTipo().equals(TipoItemServico.SERVICO)){
-                if (valorServico.compareTo(BigDecimal.ZERO) < 1) {
-                    throw new Exception("O valor não pode ser zero ou negativo");
+                if(item.getTipoServico() == null) {
+                    throw new Exception("O tipo de serviço do item é obrigatório.");
                 }
-                soma = soma.add(valorServico);
+                if (item.getTipoServico().getValor().compareTo(BigDecimal.ZERO) < 1) {
+                    throw new Exception("O valor não pode ser zero ou negativo.");
+                }
+                if (item.getTipoServico().getValor() == null) {
+                    throw new Exception("O valor do tipo de serviço é obrigatório.");
+                }
+
+                valorItem = item.getTipoServico().getValor();
             }
+
+            BigDecimal valorTotal = valorItem.multiply(quantidade);
+            soma = soma.add(valorTotal);
         }
         return soma;
     }
 
-    public void finalizar(br.com.localhost.oficina.modelo.Servico servico) throws Exception {
+    public void finalizar(Servico servico) throws Exception {
         if(servico.getDataFim() != null){
             throw new Exception("Esse serviço já foi finalizado");
         }
